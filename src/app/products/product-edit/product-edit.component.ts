@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { MessageService } from '../../messages/message.service';
 
-import { Product } from '../product';
+import { Product, ProductResolved } from '../product';
 import { ProductService } from '../product.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -22,21 +22,33 @@ export class ProductEditComponent implements OnInit {
               private router:Router) { }
   ngOnInit(): void {
     //let id=+this.route.snapshot.paramMap.get('id');    
-    this.route.paramMap.subscribe({
-      next:param=>{
-       let id= +param.get('id')
-        this.getProduct(id);
-      }
-    })
+    // this.route.paramMap.subscribe({
+    //   next:param=>{
+    //    let id= +param.get('id')
+    //     this.getProduct(id);
+    //   }
+    // })
    
+    /* incase the rout data will not change you could use the snapshot property without issue */
+    // const productResolved:ProductResolved= this.route.snapshot.data['productResolved']
+
+    // this.onProductRetrieved(productResolved.product);
+    // this.errorMessage=productResolved.error;
+
+    this.route.data.subscribe(data=>{
+       const productResolved:ProductResolved= data['productResolved']
+       this.onProductRetrieved(productResolved.product);
+       this.errorMessage=productResolved.error;
+    })
+
   }
 
-  getProduct(id: number): void {
-    this.productService.getProduct(id).subscribe({
-      next: product => this.onProductRetrieved(product),
-      error: err => this.errorMessage = err
-    });
-  }
+  // getProduct(id: number): void {
+  //   this.productService.getProduct(id).subscribe({
+  //     next: product => this.onProductRetrieved(product),
+  //     error: err => this.errorMessage = err
+  //   });
+  // }
 
   onProductRetrieved(product: Product): void {
     this.product = product;
